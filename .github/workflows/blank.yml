@@ -4,7 +4,7 @@ name: Create PR from design to main
 on:
   push:
     branches:
-      - design
+      - main
     paths:
       - 'tokens.json'
       
