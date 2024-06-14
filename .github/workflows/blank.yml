@@ -20,13 +20,32 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    env:
+        SETTING_JSON_PATH: ./tokens.json
+        SETTING_OUTPUT_PATH: ./designTokens.scss
+        SETTING_UPDATE_BRANCHES: main
+  
+    strategy:
+        matrix:
+          node-version: [17.x]
+  
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-
-      - name: Design Tokens Transform
-        # You may pin to the exact commit or the version.
-        # uses: polakowski/design-tokens-transform-action@99ddd00f203a8bbb7ab88fd36705482c66612378
-        uses: polakowski/design-tokens-transform-action@v0.1.4
-          
+        - uses: actions/checkout@v3
+  
+        - name: Use Node.js ${{ matrix.node-version }}
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ matrix.node-version }}
+        - run: JSON_PATH=$SETTING_JSON_PATH OUTPUT_PATH=$SETTING_OUTPUT_PATH node designTokenConverter.js
+  
+        - name: Add & Commit
+          uses: EndBug/add-and-commit@v4.4.0
+          with:
+            add: "${{ env.SETTING_OUTPUT_PATH }}"
+            message: "[FE] design : Github Action 디자인 토큰 자동 생성"
+            ref: "${{ env.SETTING_UPDATE_BRANCHES }}"
+  
+        - name: Push commit
+          uses: ad-m/github-push-action@master
+          with:
+            branch: "${{ env.SETTING_UPDATE_BRANCHES }}"
