@@ -5,8 +5,8 @@
       "transformGroup": "scss",
       "files": [
         {
-          "destination": "css/variables.scss",
-          "format": "css/variables"
+          "destination": "scss/variables.scss",
+          "format": "scss/variables"
         }
       ]
     }
